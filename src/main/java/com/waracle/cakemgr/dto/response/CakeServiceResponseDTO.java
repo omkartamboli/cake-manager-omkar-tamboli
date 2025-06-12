@@ -2,6 +2,7 @@ package com.waracle.cakemgr.dto.response;
 
 import com.waracle.cakemgr.dto.request.CakeDTO;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,9 @@ import java.util.List;
  *
  * @author Omkar Tamboli
  */
-public class CakeServiceResponseDTO extends BaseServiceResponseDTO {
+public class CakeServiceResponseDTO extends BaseServiceResponseDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * A list of cake DTOs returned by the service.

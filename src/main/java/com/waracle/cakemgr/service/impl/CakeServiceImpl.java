@@ -148,7 +148,6 @@ public class CakeServiceImpl implements CakeService {
      * Retrieves all cakes from the repository.
      *
      * @return list of {@link CakeDTO} representing all cakes
-     * @throws CakeServiceException if retrieval fails
      */
     @Override
     public List<CakeDTO> getAllCakes() {

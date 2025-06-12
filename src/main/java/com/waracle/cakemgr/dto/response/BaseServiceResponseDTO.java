@@ -1,5 +1,6 @@
 package com.waracle.cakemgr.dto.response;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,9 @@ import java.util.List;
  *
  * @author Omkar Tamboli
  */
-public class BaseServiceResponseDTO {
+public class BaseServiceResponseDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     /**
      * A list of error messages associated with the service response.
