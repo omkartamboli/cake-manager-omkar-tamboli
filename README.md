@@ -1,41 +1,80 @@
-![act-logo](https://raw.githubusercontent.com/wiki/nektos/act/img/logo-150.png)
+# 🍰 Enhanced Cake Manager Micro Service (Fictitious)
 
-# Overview [![push](https://github.com/nektos/act/workflows/push/badge.svg?branch=master&event=push)](https://github.com/nektos/act/actions) [![Go Report Card](https://goreportcard.com/badge/github.com/nektos/act)](https://goreportcard.com/report/github.com/nektos/act) [![awesome-runners](https://img.shields.io/badge/listed%20on-awesome--runners-blue.svg)](https://github.com/jonico/awesome-runners)
+---
 
-> "Think globally, `act` locally"
+## 🔧 Changes
 
-Run your [GitHub Actions](https://developer.github.com/actions/) locally! Why would you want to do this? Two reasons:
+### 📦 Project Structural Reforms
+1. Used **Spring Boot** for faster development and easy containerization, supporting cloud-native development. Offers broad support for open-source libraries.
+2. Replaced `javax.persistence.*` with `jakarta.persistence.*`, as the former is unsupported in Spring 3.x.
+3. Adopted **JpaRepository** to eliminate boilerplate DAO code.
+4. Separated persistence (`entity`) and data transfer (`dto`) layers.
+5. Refactored package structure—added `persistence`, `security`, `dto`, `service`, and grouped classes accordingly.
 
-- **Fast Feedback** - Rather than having to commit/push every time you want to test out the changes you are making to your `.github/workflows/` files (or for any changes to embedded GitHub actions), you can use `act` to run the actions locally. The [environment variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables) and [filesystem](https://help.github.com/en/actions/reference/virtual-environments-for-github-hosted-runners#filesystems-on-github-hosted-runners) are all configured to match what GitHub provides.
-- **Local Task Runner** - I love [make](<https://en.wikipedia.org/wiki/Make_(software)>). However, I also hate repeating myself. With `act`, you can use the GitHub Actions defined in your `.github/workflows/` to replace your `Makefile`!
+### 🔐 Security Additions
+1. Implemented **authentication** and **role-based access** for APIs:
+    - `Create`, `Update`, `Delete`: accessible by `ROLE_ADMIN`
+    - `Get` APIs: accessible by both `ROLE_ADMIN` and `ROLE_CUSTOMER`
+2. Enabled **SSL configuration** to enforce HTTPS protocol.
+3. Added **XSS protection** at both parameter and JSON body levels.
+4. Introduced a **global exception handler** to prevent internal exceptions from leaking to API consumers.
+5. Changed the application context path from `/` to `/cakeshop` to reduce vulnerability to generic attacks on the root path.
 
-> [!TIP]
-> **Now Manage and Run Act Directly From VS Code!**<br/>
-> Check out the [GitHub Local Actions](https://sanjulaganepola.github.io/github-local-actions-docs/) Visual Studio Code extension which allows you to leverage the power of `act` to run and test workflows locally without leaving your editor.
+### 📊 Monitoring Support
+1. Added **logging** and **performance monitoring** using Spring AOP:
+    - Logs method entry, parameters, exit, return values, and execution time for service and controller methods.
 
-# How Does It Work?
+### ⚙️ CI/CD
+1. Included a **Dockerfile** for containerization.
+2. Set up **CI** using **GitHub Actions**.
+3. Verified CI locally using [`act`](https://github.com/nektos/act) and Docker.
+4. Wrote:
+    - Unit and integration tests for the **service** layer.
+    - **Controller-level integration tests** using **Postman Collection**, executed with `newman` CLI.
+      > 📌 Requires Newman: `npm install -g newman`
 
-When you run `act` it reads in your GitHub Actions from `.github/workflows/` and determines the set of actions that need to be run. It uses the Docker API to either pull or build the necessary images, as defined in your workflow files and finally determines the execution path based on the dependencies that were defined. Once it has the execution path, it then uses the Docker API to run containers for each action based on the images prepared earlier. The [environment variables](https://help.github.com/en/actions/configuring-and-managing-workflows/using-environment-variables#default-environment-variables) and [filesystem](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#file-systems) are all configured to match what GitHub provides.
+### 📚 Documentation
+1. Added **Swagger** documentation for all REST APIs.
+2. Added comprehensive **Javadoc** to improve maintainability.
 
-Let's see it in action with a [sample repo](https://github.com/cplee/github-actions-demo)!
+---
 
-![Demo](https://raw.githubusercontent.com/wiki/nektos/act/quickstart/act-quickstart-2.gif)
+## ▶️ Actions
 
-# Act User Guide
+1. **Run Spring Boot App from Command Line**
 
-Please look at the [act user guide](https://nektosact.com) for more documentation.
+   ```bash
+   mvn clean install spring-boot:run
+   ```
 
-# Support
+    - App context path: [https://localhost:9901/cakeshop](https://localhost:9901/cakeshop)
 
-Need help? Ask in [discussions](https://github.com/nektos/act/discussions)!
+2. **Access Swagger UI Documentation**
 
-# Contributing
+   [https://localhost:9901/cakeshop/swagger-ui/index.html](https://localhost:9901/cakeshop/swagger-ui/index.html)
 
-Want to contribute to act? Awesome! Check out the [contributing guidelines](CONTRIBUTING.md) to get involved.
+3. **Run E2E Postman Collection Test (Requires Newman)**
 
-## Manually building from source
+   ```bash
+   newman run src/test/resources/CakeController.postman_collection.json \
+     -e src/test/resources/CakeController.env.json --insecure
+   ```
 
-- Install Go tools 1.20+ - (<https://golang.org/doc/install>)
-- Clone this repo `git clone git@github.com:nektos/act.git`
-- Run unit tests with `make test`
-- Build and install: `make install`
+4. **Test CI Support Using GitHub Actions Locally (Requires `act`)**
+
+   ```bash
+   act push
+   ```
+
+---
+
+## 🚀 Further Improvements
+
+1. Integrate with a real database (e.g., **MySQL**) instead of in-memory persistence.
+2. Replace in-memory user auth with **IAM-based user authentication** (e.g., OAuth2 or JWT).
+3. Build a **frontend web UI** or **mobile app** to make the APIs user-friendly.
+4. Extend the ER data model to include more features:
+    - Entities like **Pricing**, **Cart**, **Order**, **Delivery**, etc.
+    - Provide a more enriched and real-world commerce experience.
+
+---

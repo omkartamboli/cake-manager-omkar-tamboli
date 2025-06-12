@@ -51,8 +51,6 @@ Further Improvements:
 3. Frontend or mobile APP of user-friendly access of APIs
 4. Enhance ER DataModel to include more Entities and provide enriched experience. Pricing, Cart, Order, Delivery etc.
 
-
-
 =======================================
 Original README contents below
 =======================================
