@@ -26,6 +26,7 @@
 
 ### ⚙️ CI/CD
 1. Included a **Dockerfile** for containerization.
+   - See below **Docker Build & Run Instructions** Section for detailed steps
 2. Set up **CI** using **GitHub Actions**.
 3. Verified CI locally using [`act`](https://github.com/nektos/act) and Docker.
 4. Wrote:
@@ -78,3 +79,84 @@
     - Provide a more enriched and real-world commerce experience.
 
 ---
+
+
+## 🐳 Docker Build & Run Instructions
+
+Follow these steps to containerize and deploy the `cakeshop-springboot-app` using Docker.
+
+### ✅ Step 1: Prerequisites
+
+Ensure the following are installed on your system:
+
+- [Java 17+](https://adoptium.net/)
+- [Maven](https://maven.apache.org/)
+- [Docker](https://www.docker.com/)
+
+---
+
+### ✅ Step 2: Build the Spring Boot Application
+
+Use Maven to generate the executable JAR file:
+
+```bash
+mvn clean install
+```
+
+> This will produce a JAR inside the `target/` directory, for example:  
+> `target/cakeshop-springboot-app-0.0.1-SNAPSHOT.jar`
+
+---
+
+### ✅ Step 3: Build the Docker Image
+
+Use the following command to build the Docker image:
+
+```bash
+docker build -t cakeshop-springboot-app .
+```
+
+> This will use `Dockerfile` provided in the project root.
+
+---
+
+### ✅ Step 4: Run the Application Container
+
+Run the Docker container and expose port `9901`:
+
+```bash
+docker run -p 9901:9901 cakeshop-springboot-app
+```
+
+> The app will now be accessible at `https://localhost:9901/cakeshop`
+
+---
+
+### ✅ Step 5: Access and Verify
+
+- Open Swagger UI:  
+  `https://localhost:9901/cakeshop/swagger-ui/index.html`
+
+- Or test APIs via Postman, curl, or browser.
+
+---
+
+## 📦 Optional: Stop and Remove Container/Image
+
+```bash
+# To list running containers
+docker ps
+
+# To stop container
+docker stop <container_id>
+
+# To remove container/image
+docker rm <container_id>
+docker rmi cakeshop-springboot-app
+```
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License.
