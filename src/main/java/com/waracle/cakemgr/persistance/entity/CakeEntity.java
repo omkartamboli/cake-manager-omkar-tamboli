@@ -13,8 +13,6 @@ import java.math.BigDecimal;
 @Table(name = "Cake", uniqueConstraints = {@UniqueConstraint(columnNames = "ID")})
 public class CakeEntity {
 
-    private static final long serialVersionUID = -2798070786993154676L;
-
     /**
      * The primary key identifier for the cake.
      * Auto-generated and unique.
@@ -42,7 +40,7 @@ public class CakeEntity {
      * Optional description of the cake.
      * Can be null, with a maximum length of 300 characters.
      */
-    @Column(name = "DESCRIPTION", nullable = true, length = 300)
+    @Column(name = "DESCRIPTION", length = 300)
     private String description;
 
     /**

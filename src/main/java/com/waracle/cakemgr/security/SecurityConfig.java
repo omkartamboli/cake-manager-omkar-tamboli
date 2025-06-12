@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,7 +33,7 @@ import org.springframework.security.web.SecurityFilterChain;
  * @author Omkar Tamboli
  */
 @Configuration
-@EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
+@EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
@@ -53,7 +54,7 @@ public class SecurityConfig {
         LOGGER.info("Creating SecurityFilterChain Configuration.");
         http
                 // CSRF is disabled for postman API testing, should be enabled for PROD
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 // Enable HTTP Basic authentication
                 .httpBasic(Customizer.withDefaults())
                 // Configure security headers

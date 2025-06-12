@@ -34,6 +34,7 @@ public class CakeManagerWebApplication {
      * @param args command-line arguments passed during startup
      */
     public static void main(String[] args) {
+        LOGGER.info("Starting Cake Manager Web Application");
         context = SpringApplication.run(CakeManagerWebApplication.class, args);
     }
 }

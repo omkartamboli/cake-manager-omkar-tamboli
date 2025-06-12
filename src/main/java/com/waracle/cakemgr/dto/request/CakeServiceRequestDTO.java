@@ -23,7 +23,7 @@ import java.math.BigDecimal;
  *
  * @author Omkar Tamboli
  */
-public class CakeServiceRequestDTO {
+public class CakeServiceRequestDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

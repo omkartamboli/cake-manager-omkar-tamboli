@@ -146,7 +146,7 @@ class CakeServiceImplIntegrationTest {
      */
     @Test
     @DisplayName("getCake – returns empty when absent")
-    void getCake_absent() throws CakeServiceException {
+    void getCake_absent() {
         assertThrows(CakeServiceException.class,
                 () -> cakeService.getCake(777));
     }

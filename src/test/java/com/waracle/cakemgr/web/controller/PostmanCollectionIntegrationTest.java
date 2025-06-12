@@ -3,7 +3,6 @@ package com.waracle.cakemgr.web.controller;
 import com.waracle.cakemgr.CakeManagerWebApplication;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -11,6 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -48,9 +48,7 @@ public class PostmanCollectionIntegrationTest {
      */
     @BeforeAll
     public void startServer() throws Exception {
-        Thread serverThread = new Thread(() -> {
-            context = SpringApplication.run(CakeManagerWebApplication.class);
-        });
+        Thread serverThread = new Thread(() -> context = SpringApplication.run(CakeManagerWebApplication.class));
         serverThread.setDaemon(true);
         serverThread.start();
 
@@ -90,7 +88,7 @@ public class PostmanCollectionIntegrationTest {
         int exitCode = process.waitFor();
 
         // Newman returns 0 if all tests pass
-        assertTrue(exitCode == 0, "Postman tests failed:\n" + output.toString());
+        assertEquals(0, exitCode, "Postman tests failed:\n" + output);
     }
 
     /**

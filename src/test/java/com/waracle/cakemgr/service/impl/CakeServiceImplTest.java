@@ -6,12 +6,10 @@ import com.waracle.cakemgr.persistance.entity.CakeEntity;
 import com.waracle.cakemgr.persistance.repository.CakeRepository;
 import com.waracle.cakemgr.service.exception.CakeServiceException;
 import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
 import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
-import org.slf4j.Logger;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -131,7 +129,7 @@ class CakeServiceImplTest {
      * <p>Ensures no exceptions are thrown and repository delete is called.</p>
      */
     @Test
-    void testDeleteCakeSuccess() throws CakeServiceException {
+    void testDeleteCakeSuccess() {
         CakeEntity foundEntity = new CakeEntity("Old", BigDecimal.valueOf(10.0), "Old desc");
         foundEntity.setCakeId(1);
 

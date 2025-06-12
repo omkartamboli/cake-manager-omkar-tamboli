@@ -22,7 +22,7 @@ public class CakeServiceException extends Exception {
     /**
      * Container to store the errors detected, which can be propagated upstream.
      */
-    List<String> errors = new ArrayList<>();
+    List<String> errors;
 
     /**
      * Constructs a new {@code CakeServiceException} with the specified detail message and list of errors.

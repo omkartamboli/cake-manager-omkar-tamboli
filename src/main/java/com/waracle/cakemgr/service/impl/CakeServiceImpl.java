@@ -151,7 +151,7 @@ public class CakeServiceImpl implements CakeService {
      * @throws CakeServiceException if retrieval fails
      */
     @Override
-    public List<CakeDTO> getAllCakes() throws CakeServiceException {
+    public List<CakeDTO> getAllCakes() {
         return getCakeRepository()
                 .findAll()
                 .stream()
