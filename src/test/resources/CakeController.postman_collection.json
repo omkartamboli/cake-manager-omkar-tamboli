@@ -1,0 +1,882 @@
+{
+  "info": {
+    "_postman_id": "3c4aea21-6097-4d72-87c2-511f0c6222ca",
+    "name": "CakeController API Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "1329055"
+  },
+  "item": [
+    {
+      "name": "Cake CRUD - Admin",
+      "item": [
+        {
+          "name": "Create Cake",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));",
+                  "const cakePayload = {",
+                  "  name: `Test Cake ${Math.floor(Math.random() * 10000)}` ,",
+                  "  description: \"Delicious test cake\",",
+                  "  price: 20.99",
+                  "};",
+                  "pm.environment.set(\"new_cake_payload\", JSON.stringify(cakePayload));",
+                  "pm.request.body.raw = pm.environment.get(\"new_cake_payload\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Response has cake list\", () => {",
+                  "  pm.expect(jsonData.cakes).to.be.an(\"array\");",
+                  "  pm.expect(jsonData.cakes.length).to.be.above(0);",
+                  "});",
+                  "const cakeId = jsonData.cakes[0].cakeId;",
+                  "pm.environment.set(\"created_cake_id\", cakeId);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{{new_cake_payload}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Cakes",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// use admin token for admin collection",
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Cakes array present\", () => {",
+                  "  pm.expect(jsonData.cakes).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{adminAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cake By ID",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));",
+                  "const cakeId = pm.environment.get(\"created_cake_id\");",
+                  "if (!cakeId) throw new Error(\"No cake ID found in environment\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Cake ID matches requested\", () => {",
+                  "  pm.expect(jsonData.cakes[0].cakeId).to.eql(parseInt(pm.environment.get(\"created_cake_id\")));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{adminAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cakes/{{created_cake_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes",
+                "{{created_cake_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cake",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));",
+                  "const cakeId = pm.environment.get(\"created_cake_id\");",
+                  "if (!cakeId) throw new Error(\"No cake ID found in environment\");",
+                  "const updatedPayload = {",
+                  "  name: \"Updated Cake Title\",",
+                  "  description: \"Updated Description\",",
+                  "  price: 25.99",
+                  "};",
+                  "pm.environment.set(\"updated_cake_payload\", JSON.stringify(updatedPayload));",
+                  "pm.request.body.raw = pm.environment.get(\"updated_cake_payload\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Cake title updated\", () => {",
+                  "  pm.expect(jsonData.cakes[0].name).to.eql(\"Updated Cake Title\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{{updated_cake_payload}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes/{{created_cake_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes",
+                "{{created_cake_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Cake",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));",
+                  "const cakeId = pm.environment.get(\"created_cake_id\");",
+                  "if (!cakeId) throw new Error(\"No cake ID found in environment\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "pm.environment.unset(\"created_cake_id\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{adminAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cakes/{{created_cake_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes",
+                "{{created_cake_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cake Read - Customer",
+      "item": [
+        {
+          "name": "Create Cake for Customer",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));",
+                  "const cakePayload = {",
+                  "  name: `Test Cake ${Math.floor(Math.random() * 10000)}` ,",
+                  "  description: \"Delicious test cake\",",
+                  "  price: 20.99",
+                  "};",
+                  "pm.environment.set(\"new_cake_payload\", JSON.stringify(cakePayload));",
+                  "pm.request.body.raw = pm.environment.get(\"new_cake_payload\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Response has cake list\", () => {",
+                  "  pm.expect(jsonData.cakes).to.be.an(\"array\");",
+                  "  pm.expect(jsonData.cakes.length).to.be.above(0);",
+                  "});",
+                  "const cakeId = jsonData.cakes[0].cakeId;",
+                  "pm.environment.set(\"created_cake_id\", cakeId);"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{adminAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{{new_cake_payload}}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Cakes (Customer)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Cakes array present\", () => {",
+                  "  pm.expect(jsonData.cakes).to.be.an(\"array\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cake By ID (Customer)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));",
+                  "const cakeId = pm.environment.get(\"created_cake_id\");",
+                  "if (!cakeId) throw new Error(\"No cake ID found in environment\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", () => pm.response.to.have.status(200));",
+                  "const jsonData = pm.response.json();",
+                  "pm.test(\"Cake ID matches requested\", () => {",
+                  "  pm.expect(jsonData.cakes[0].cakeId).to.eql(parseInt(pm.environment.get(\"created_cake_id\")));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cakes/{{created_cake_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes",
+                "{{created_cake_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Scenarios",
+      "item": [
+        {
+          "name": "Create Cake with CUSTOMER role (should fail 403)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 or 401\", () => pm.expect(pm.response.code).to.be.oneOf([401,403]));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Invalid Create\",\"description\":\"Should fail\",\"price\":\"23.99\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Cake without Name (should fail 400)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\":\"Should fail\",\"price\":23.99}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Cake without Price (should fail 400)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\":\"Should fail\",\"name\":\"ABC cake\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Cake with negative Price (should fail 400)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 400\", () => pm.expect(pm.response.code).to.be.oneOf([400]));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"description\":\"Should fail\",\"name\":\"ABC cake\", \"price\": -22.36}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Cake by invalid ID (should 404)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// use admin token for this",
+                  "pm.environment.set(\"token\", pm.environment.get(\"admin_token\"));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 404\", () => pm.response.to.have.status(404));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/cakes/999999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes",
+                "999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Cake with CUSTOMER role (should fail 403)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.environment.set(\"token\", pm.environment.get(\"customer_token\"));",
+                  "const cakeId = pm.environment.get(\"created_cake_id\");",
+                  "if (!cakeId) throw new Error(\"No cake ID found in environment\");"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 403 or 401\", () => pm.expect(pm.response.code).to.be.oneOf([401,403]));"
+                ],
+                "type": "text/javascript",
+                "packages": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{userAuthToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Invalid Update\",\"description\":\"Should fail\",\"price\": 12.50}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/cakes/{{created_cake_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "cakes",
+                "{{created_cake_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "host",
+      "value": "https://localhost:9901",
+      "type": "string"
+    },
+    {
+      "key": "base_url",
+      "value": "{{host}}/cakeshop",
+      "type": "string"
+    },
+    {
+      "key": "adminAuthToken",
+      "value": "Basic Y2FrZW1hbmFnZXI6Y2ttIyQ1XjdyZA==",
+      "type": "string"
+    },
+    {
+      "key": "userAuthToken",
+      "value": "Basic Y2FrZXVzZXI6Y2t1IyQ3XjByZA==",
+      "type": "string"
+    },
+    {
+      "key": "created_cake_id",
+      "value": "",
+      "type": "string"
+    }
+  ]
+}
